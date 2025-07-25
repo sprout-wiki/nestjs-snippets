@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Demo } from './demo/entities/demo.entity';
-import { DemoModule } from './demo/demo.module';
 
 @Module({
   imports: [
@@ -19,11 +17,10 @@ import { DemoModule } from './demo/demo.module';
         username: config.get('DB_USER'),
         password: config.get('DB_PASS'),
         database: config.get('DB_NAME'),
-        entities: [Demo],
+        entities: [],
         synchronize: true,
       }),
     }),
-    DemoModule,
   ],
 })
 export class AppModule {}
