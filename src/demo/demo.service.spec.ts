@@ -31,11 +31,13 @@ describe('DemoService', () => {
 
   // smoke test
   it('should be defined', () => {
+    console.log('🔹 [TEST] should be defined');
     expect(service).toBeDefined();
   });
 
   // db test
   it('should create a new Demo entity using mock repository', async () => {
+    console.log('🔹 [TEST] should create a new Demo entity using mock repository');
 
     // dto without id (p-key)
     const dto = { title: 'Mock Test', description: 'mocking repository' };
@@ -43,17 +45,24 @@ describe('DemoService', () => {
     // fakeEntity
     const fakeEntity = { id: 1, title: 'Mock Test', description: 'mocking repository' };
     
-    // create(fakeEntity)
-    mockRepo.create.mockReturnValue(fakeEntity);
-
-    // save(fakeEntity)
-    mockRepo.save.mockResolvedValue(fakeEntity);
+    // mock create
+    mockRepo.create.mockImplementation((arg) => {
+      console.log('✅ mockRepo.create called with:', arg);
+      return fakeEntity;
+    });
+    
+    // mock save
+    mockRepo.save.mockImplementation(async (arg) => {
+      console.log('✅ mockRepo.save called with:', arg);
+      return fakeEntity;
+    });
 
     // createTest
     const result = await service.create(dto);
 
+    // optional expectations for clarity
+    expect(result).toEqual(fakeEntity);
     expect(mockRepo.create).toHaveBeenCalledWith(dto);
     expect(mockRepo.save).toHaveBeenCalledWith(fakeEntity);
-    expect(result).toEqual(fakeEntity);
   });
 });
