@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateDemoDto } from './dto/create-demo.dto';
 import { UpdateDemoDto } from './dto/update-demo.dto';
+import { Demo } from './entities/demo.entity';
 
 @Injectable()
 export class DemoService {
-  create(createDemoDto: CreateDemoDto) {
-    return 'This action adds a new demo';
+  constructor(
+    @InjectRepository(Demo)
+    private readonly demoRepository: Repository<Demo>,
+  ) {}
+
+  async create(createDemoDto: CreateDemoDto) {
+    const entity = this.demoRepository.create(createDemoDto);
+    console.log(`demo.service> create: ${JSON.stringify(entity)}`);
+    return await this.demoRepository.save(entity);
   }
 
-  findAll() {
-    return `This action returns all demo`;
+  async findAll() {
+    return await this.demoRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} demo`;
+  async findOne(id: number) {
+    return await this.demoRepository.findOneBy({ id });
   }
 
-  update(id: number, updateDemoDto: UpdateDemoDto) {
-    return `This action updates a #${id} demo`;
+  async update(id: number, updateDemoDto: UpdateDemoDto) {
+    await this.demoRepository.update(id, updateDemoDto);
+    return await this.demoRepository.findOneBy({ id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} demo`;
+  async remove(id: number) {
+    await this.demoRepository.delete(id);
+    return { deleted: true };
   }
 }
